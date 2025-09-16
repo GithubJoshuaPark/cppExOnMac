@@ -12,30 +12,47 @@ const std::string FILE_NAME = "books.json";
 
 // 파일에서 JSON 데이터를 읽어와 반환하는 함수
 json readJsonFromFile() {
+    // 1. 파일을 읽기 위해 ifstream 객체를 생성합니다.
     std::ifstream inFile(FILE_NAME);
-    json j;
+    json j; // 2. JSON 데이터를 담을 객체를 생성합니다.
+
+    // 3. 파일이 성공적으로 열렸는지 확인합니다.
     if (inFile.is_open()) {
         try {
+            // 4. 파일의 내용을 JSON 객체 'j'로 파싱(parsing)합니다.
             inFile >> j;
         } catch (const json::parse_error& e) {
+            // 5. 만약 파일 내용이 올바른 JSON 형식이 아닐 경우 예외를 처리합니다.
             std::cout << "Warning: Could not parse JSON file. Starting with an empty list." << std::endl;
-            j = json::array();
+            j = json::array(); // 빈 배열로 초기화합니다.
         }
     } else {
+        // 6. 파일이 존재하지 않을 경우, 경고 메시지를 출력하고 새롭게 시작합니다.
         std::cout << "Warning: " << FILE_NAME << " not found. Creating a new one." << std::endl;
         j = json::array();
     }
+    // 7. 파싱된 JSON 객체 또는 빈 배열 객체를 반환합니다.
     return j;
 }
 
 // JSON 데이터를 파일에 쓰는 함수
 void writeJsonToFile(const json& j) {
+    // 1. 파일을 쓰기 위해 ofstream 객체를 생성합니다.
     std::ofstream outFile(FILE_NAME);
+
+    // 2. 파일이 성공적으로 열렸는지 확인합니다.
     if (!outFile.is_open()) {
         std::cout << "Error: Could not open " << FILE_NAME << " for writing." << std::endl;
         return;
     }
+
+    // 3. JSON 객체를 문자열로 변환하여 파일에 씁니다.
+    // json 객체 j의 내용을 문자열 형태로 변환(serialize)합니다. 
+    // j.dump(4): 인자로 4를 전달하면, 
+    // JSON 구조를 사람이 읽기 쉽게 4칸씩 들여쓰기(pretty-printing)하여 변환해 줍니다.
     outFile << j.dump(4);
+
+    // 4. 파일을 닫습니다.
     outFile.close();
     std::cout << "Data saved successfully to " << FILE_NAME << "." << std::endl;
 }
